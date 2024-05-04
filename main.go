@@ -34,22 +34,23 @@ func main() {
 			addFileBtn := widget.NewButton("Add New File", nil)
 			filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
 			return container.NewGridWithColumns(3, clientNameLabel, filesListContainer, addFileBtn)
-			// return widget.NewLabel("")
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
 			c := (*clients)[lii]
+
 			objects := co.(*fyne.Container).Objects
-			// label := co.(*widget.Label)
 			label := objects[0]
 			filesList := objects[1].(*fyne.Container)
 			filesList.Objects = nil
 			fileBtn := objects[2]
+
 			label.(*widget.Label).SetText(c.ClientName)
 			fileBtn.(*widget.Button).OnTapped = func() {
 				log.Println(c.ClientName)
 				// log.Println(filest)
 				newFile := client.NewFile(1, 43.2)
 				*c.Files = append(*c.Files, newFile)
+				w.Content().Refresh()
 			}
 			for _, file := range *c.Files {
 				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
@@ -67,10 +68,6 @@ func main() {
 		table.Refresh()
 	})
 
-	// addFileToClient := widget.NewButton("Add File", func() {
-
-	// })
-
 	menuLabel := widget.NewLabel("Create Client")
 	// fileSize := binding.NewFloat()
 	fileSizeEntry := widget.NewEntry()
@@ -85,13 +82,3 @@ func main() {
 	w.SetContent(container.NewGridWithColumns(1, grid, tableContainer))
 	w.ShowAndRun()
 }
-
-func addButton(action func()) *widget.Button {
-	button := widget.NewButton("Add File", action)
-	return button
-}
-
-// func addNewFile() {
-// 	file := client.NewFile(1, 1.4)
-
-// }
