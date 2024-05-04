@@ -27,7 +27,6 @@ func main() {
 	var table *widget.List
 
 	updateTable := func() {
-		// Refresh the table to reflect the changes
 		table.Refresh()
 	}
 
@@ -39,7 +38,8 @@ func main() {
 			clientNameLabel := widget.NewLabel("")
 			addFileBtn := widget.NewButton("Add New File", nil)
 			filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
-			return container.NewGridWithColumns(3, clientNameLabel, filesListContainer, addFileBtn)
+			elapsedTimeLabel := widget.NewLabel("")
+			return container.NewGridWithColumns(4, clientNameLabel, filesListContainer, elapsedTimeLabel, addFileBtn)
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
 			c := (*clients)[lii]
@@ -48,16 +48,18 @@ func main() {
 			label := objects[0]
 			filesList := objects[1].(*fyne.Container)
 			filesList.Objects = nil
-			fileBtn := objects[2]
+			elapsedTimeLabel := objects[2].(*widget.Label)
+			fileBtn := objects[3]
 
 			label.(*widget.Label).SetText(c.ClientName)
 			for _, file := range *c.Files {
 				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
 				filesList.Add(fileSizeLabel)
 			}
+			elapsedTime := c.ElapsedTime()
+			elapsedTimeLabel.SetText(fmt.Sprintf("Elapsed Time: %.2f seconds", elapsedTime))
 			fileBtn.(*widget.Button).OnTapped = func() {
 				log.Println(c.ClientName)
-				// log.Println(filest)
 				newFile := client.NewFile(1, 43.2)
 				*c.Files = append(*c.Files, newFile)
 				updateTable()
