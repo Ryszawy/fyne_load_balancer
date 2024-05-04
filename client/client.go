@@ -1,6 +1,8 @@
 package client
 
-import "time"
+import (
+	"time"
+)
 
 type Client struct {
 	ClientID   int

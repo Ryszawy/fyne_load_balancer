@@ -31,11 +31,11 @@ func main() {
 		},
 		func() fyne.CanvasObject {
 			clientNameLabel := widget.NewLabel("")
-			btnLabel := widget.NewButton("Add New File", func() {
-				log.Println("Elo")
-			})
+			// btnLabel := widget.NewButton("Add New File", func() {
+			// 	log.Println("Elo")
+			// })
 			filesListContainer := container.NewVScroll(widget.NewLabel("Empty"))
-			return container.NewGridWithColumns(3, clientNameLabel, filesListContainer, btnLabel)
+			return container.NewGridWithColumns(2, clientNameLabel, filesListContainer)
 			// return widget.NewLabel("")
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
@@ -76,3 +76,13 @@ func main() {
 	w.SetContent(container.NewGridWithColumns(1, grid, tableContainer))
 	w.ShowAndRun()
 }
+
+func addButton(action func()) *widget.Button {
+	button := widget.NewButton("Add File", action)
+	return button
+}
+
+// func addNewFile() {
+// 	file := client.NewFile(1, 1.4)
+
+// }
