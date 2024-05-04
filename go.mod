@@ -1,4 +1,4 @@
-module github.com/Ryszawy/fyne_test
+module github.com/Ryszawy/fyne_load_balance
 
 go 1.22.0
 
