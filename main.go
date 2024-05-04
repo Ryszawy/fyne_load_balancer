@@ -24,8 +24,14 @@ func main() {
 	bars := canvas.NewText("bars", color.White)
 	clients := client.CreateEmptyClintsArr()
 	clinetCounter := client.IDCounter()
+	var table *widget.List
 
-	table := widget.NewList(
+	updateTable := func() {
+		// Refresh the table to reflect the changes
+		table.Refresh()
+	}
+
+	table = widget.NewList(
 		func() int {
 			return len(*clients)
 		},
@@ -45,16 +51,16 @@ func main() {
 			fileBtn := objects[2]
 
 			label.(*widget.Label).SetText(c.ClientName)
+			for _, file := range *c.Files {
+				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
+				filesList.Add(fileSizeLabel)
+			}
 			fileBtn.(*widget.Button).OnTapped = func() {
 				log.Println(c.ClientName)
 				// log.Println(filest)
 				newFile := client.NewFile(1, 43.2)
 				*c.Files = append(*c.Files, newFile)
-				w.Content().Refresh()
-			}
-			for _, file := range *c.Files {
-				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
-				filesList.Add(fileSizeLabel)
+				updateTable()
 			}
 		},
 	)
