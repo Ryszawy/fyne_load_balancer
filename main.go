@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
-	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -26,26 +26,33 @@ func main() {
 
 	table := widget.NewList(
 		func() int {
-			return len(clients)
+			return len(*clients)
 		},
 		func() fyne.CanvasObject {
 			return widget.NewLabel("")
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
-			c := clients[lii]
+			c := (*clients)[lii]
 			label := co.(*widget.Label)
 			label.SetText(c.ClientName)
 		},
 	)
 	addClientBtn := widget.NewButton("Add Client", func() {
 		id := clinetCounter()
-		log.Println(id)
-		c := client.NewClient(id, "Client")
-		clients = append(clients, c)
+		cName := fmt.Sprintf("Client %d", id)
+		c := client.NewClient(id, cName)
+
+		*clients = append(*clients, c)
 		table.Refresh()
 	})
 
-	menu := container.NewGridWithRows(4, bars, bars, bars, addClientBtn)
+	menuLabel := widget.NewLabel("Create Client")
+	// fileSize := binding.NewFloat()
+	fileSizeEntry := widget.NewEntry()
+	fileSizeEntry.SetPlaceHolder("File Size")
+	filesGrid := container.NewGridWithColumns(2, fileSizeEntry)
+
+	menu := container.NewGridWithRows(4, menuLabel, filesGrid, bars, addClientBtn)
 
 	grid := container.NewGridWithColumns(2, bars, menu)
 	tableContainer := container.NewGridWithColumns(1, table)

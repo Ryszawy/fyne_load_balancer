@@ -14,9 +14,14 @@ type File struct {
 	Size   float64
 }
 
-// TODO mabie should be a pointer
-func CreateEmptyClintsArr() []Client {
-	return []Client{}
+func CreateEmptyClintsArr() *[]Client {
+	clients := make([]Client, 0)
+	return &clients
+}
+
+func CreateEmptyFilesArr() *[]File {
+	files := make([]File, 0)
+	return &files
 }
 
 func NewClient(clientID int, clientName string) Client {
