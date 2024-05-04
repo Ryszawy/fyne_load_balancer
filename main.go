@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-	// "fmt"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -12,7 +10,6 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 
-	// "fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -46,12 +43,35 @@ func main() {
 	bars := canvas.NewText("bars", color.White)
 	menu := canvas.NewText("menu", color.White)
 	clients := []client.Client{}
+	// data := binding.BindStruct(
+	// 	&clients,
+	// )
 	clientCounter := 1
-	table := widget.NewButton("Test Client", func() {
-		c := client.NewClient(clientCounter, "c1")
+	// newClientBtn := widget.NewButton("Test Client", func() {
+	// 	c := client.NewClient(clientCounter, "c1")
+	// 	clients = append(clients, c)
+	// 	clientCounter++
+	// 	log.Println(clients, clients[0].ElapsedTime())
+	// })
+
+	table := widget.NewList(
+		func() int {
+			return len(clients)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("")
+		},
+		func(lii widget.ListItemID, co fyne.CanvasObject) {
+			c := clients[lii]
+			label := co.(*widget.Label)
+			label.SetText(string(rune(c.ClientID)))
+		},
+	)
+	addClientBtn := widget.NewButton("Add Client", func() {
+		c := client.NewClient(clientCounter, "Client "+string(rune(clientCounter)))
 		clients = append(clients, c)
 		clientCounter++
-		log.Println(clients, clients[0].ElapsedTime())
+		table.Refresh()
 	})
 	// table := widget.NewTable(
 	// 	func() (int, int) {
@@ -66,6 +86,6 @@ func main() {
 
 	grid := container.NewGridWithColumns(2, bars, menu)
 
-	w.SetContent(container.NewGridWithColumns(1, grid, table))
+	w.SetContent(container.NewGridWithColumns(1, grid, table, addClientBtn))
 	w.ShowAndRun()
 }
