@@ -51,7 +51,7 @@ func main() {
 		c := client.NewClient(clientCounter, "c1")
 		clients = append(clients, c)
 		clientCounter++
-		log.Println(clients)
+		log.Println(clients, clients[0].ElapsedTime())
 	})
 	// table := widget.NewTable(
 	// 	func() (int, int) {
