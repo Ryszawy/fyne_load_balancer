@@ -14,6 +14,11 @@ type File struct {
 	Size   float64
 }
 
+// TODO mabie should be a pointer
+func CreateEmptyClintsArr() []Client {
+	return []Client{}
+}
+
 func NewClient(clientID int, clientName string) Client {
 	emptyFilesList := make([]File, 0)
 	return Client{ClientID: clientID, ClientName: clientName, Files: emptyFilesList, StartTimer: time.Now()}
@@ -25,4 +30,12 @@ func NewFile(fileID int, size float64) File {
 
 func (c *Client) ElapsedTime() float64 {
 	return time.Since(c.StartTimer).Seconds()
+}
+
+func IDCounter() func() int {
+	var counter int = 0
+	return func() int {
+		counter++
+		return counter
+	}
 }
