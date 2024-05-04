@@ -31,21 +31,30 @@ func main() {
 		},
 		func() fyne.CanvasObject {
 			clientNameLabel := widget.NewLabel("")
-			// btnLabel := widget.NewButton("Add New File", func() {
-			// 	log.Println("Elo")
-			// })
-			filesListContainer := container.NewVScroll(widget.NewLabel("Empty"))
-			return container.NewGridWithColumns(2, clientNameLabel, filesListContainer)
+			addFileBtn := widget.NewButton("Add New File", nil)
+			filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
+			return container.NewGridWithColumns(3, clientNameLabel, filesListContainer, addFileBtn)
 			// return widget.NewLabel("")
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
 			c := (*clients)[lii]
-			// col := co.(*container.)
 			objects := co.(*fyne.Container).Objects
 			// label := co.(*widget.Label)
-			log.Println(objects)
 			label := objects[0]
+			filesList := objects[1].(*fyne.Container)
+			filesList.Objects = nil
+			fileBtn := objects[2]
 			label.(*widget.Label).SetText(c.ClientName)
+			fileBtn.(*widget.Button).OnTapped = func() {
+				log.Println(c.ClientName)
+				// log.Println(filest)
+				newFile := client.NewFile(1, 43.2)
+				*c.Files = append(*c.Files, newFile)
+			}
+			for _, file := range *c.Files {
+				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
+				filesList.Add(fileSizeLabel)
+			}
 		},
 	)
 
