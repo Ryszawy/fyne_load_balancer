@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -29,14 +30,25 @@ func main() {
 			return len(*clients)
 		},
 		func() fyne.CanvasObject {
-			return widget.NewLabel("")
+			clientNameLabel := widget.NewLabel("")
+			btnLabel := widget.NewButton("Add New File", func() {
+				log.Println("Elo")
+			})
+			filesListContainer := container.NewVScroll(widget.NewLabel("Empty"))
+			return container.NewGridWithColumns(3, clientNameLabel, filesListContainer, btnLabel)
+			// return widget.NewLabel("")
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
 			c := (*clients)[lii]
-			label := co.(*widget.Label)
-			label.SetText(c.ClientName)
+			// col := co.(*container.)
+			objects := co.(*fyne.Container).Objects
+			// label := co.(*widget.Label)
+			log.Println(objects)
+			label := objects[0]
+			label.(*widget.Label).SetText(c.ClientName)
 		},
 	)
+
 	addClientBtn := widget.NewButton("Add Client", func() {
 		id := clinetCounter()
 		cName := fmt.Sprintf("Client %d", id)
@@ -45,6 +57,10 @@ func main() {
 		*clients = append(*clients, c)
 		table.Refresh()
 	})
+
+	// addFileToClient := widget.NewButton("Add File", func() {
+
+	// })
 
 	menuLabel := widget.NewLabel("Create Client")
 	// fileSize := binding.NewFloat()

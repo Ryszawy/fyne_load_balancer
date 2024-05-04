@@ -5,7 +5,7 @@ import "time"
 type Client struct {
 	ClientID   int
 	ClientName string
-	Files      []File
+	Files      *[]File
 	StartTimer time.Time
 }
 
@@ -19,14 +19,9 @@ func CreateEmptyClintsArr() *[]Client {
 	return &clients
 }
 
-func CreateEmptyFilesArr() *[]File {
-	files := make([]File, 0)
-	return &files
-}
-
 func NewClient(clientID int, clientName string) Client {
 	emptyFilesList := make([]File, 0)
-	return Client{ClientID: clientID, ClientName: clientName, Files: emptyFilesList, StartTimer: time.Now()}
+	return Client{ClientID: clientID, ClientName: clientName, Files: &emptyFilesList, StartTimer: time.Now()}
 }
 
 func NewFile(fileID int, size float64) File {
