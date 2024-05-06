@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 	"log"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 	"fyne.io/fyne/v2/app"
 	"github.com/Ryszawy/fyne_load_balance/client"
 
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 
 	"fyne.io/fyne/v2/widget"
@@ -49,7 +47,6 @@ func main() {
 	w.SetMaster()
 	w.Resize(fyne.NewSize(1280, 720))
 
-	bars := canvas.NewText("bars", color.White)
 	clients := client.CreateEmptyClintsArr()
 	clinetCounter := client.IDCounter()
 	var table *widget.List
@@ -65,8 +62,6 @@ func main() {
 		func() fyne.CanvasObject {
 			clientNameLabel := widget.NewLabel("")
 			addFileBtn := widget.NewButton("Add New File", nil)
-			// filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
-			// filesListContainer := container.NewStack()
 			filesList := widget.NewButton("Check Files", nil)
 			elapsedTimeLabel := widget.NewLabel("")
 			return container.NewGridWithColumns(4, clientNameLabel, filesList, elapsedTimeLabel, addFileBtn)
@@ -80,19 +75,9 @@ func main() {
 			showBtn.(*widget.Button).OnTapped = func() {
 				showFiles(a, &c)
 			}
-			// filesList := objects[1].(*fyne.Container)
-			// filesList.Objects = nil
 			elapsedTimeLabel := objects[2].(*widget.Label)
 			fileBtn := objects[3]
-			// files := createFilesListPerClient(&c)
-			// filesList.Add(container.NewBorder(nil, nil, files, nil))
 			label.(*widget.Label).SetText(c.ClientName)
-
-			// for _, file := range *c.Files {
-			// 	fileSizeLabel := widget.NewLabel(
-			// 		fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
-			// 	filesList.Add(fileSizeLabel)
-			// }
 
 			elapsedTime := c.ElapsedTime()
 			elapsedTimeLabel.SetText(fmt.Sprintf("Elapsed Time: %.2f seconds", elapsedTime))
@@ -122,8 +107,10 @@ func main() {
 	controlMenu := container.NewGridWithColumns(2, widget.NewButton("Start", nil), widget.NewButton("Stop", nil))
 	serverMenu := widget.NewButton("Create New Server", nil)
 	menu := container.NewGridWithRows(4, serverMenu, filesGrid, addClientBtn, controlMenu)
-
-	grid := container.NewGridWithColumns(2, bars, menu)
+	infinite := widget.NewProgressBarInfinite()
+	infinite1 := widget.NewProgressBarInfinite()
+	infinite2 := widget.NewProgressBarInfinite()
+	grid := container.NewGridWithColumns(2, container.NewGridWithColumns(3, infinite, infinite1, infinite2), menu)
 	tableContainer := container.NewGridWithColumns(1, table)
 
 	go func() {
