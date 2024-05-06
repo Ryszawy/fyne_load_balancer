@@ -35,6 +35,14 @@ func createFilesListPerClient(c *client.Client) *widget.List {
 	)
 }
 
+func showFiles(a fyne.App, c *client.Client) {
+	filesWindow := a.NewWindow(fmt.Sprintf("%v Files", c.ClientName))
+	filesWindow.Resize(fyne.NewSize(700, 700))
+	grid := container.NewGridWithColumns(1, createFilesListPerClient(c))
+	filesWindow.SetContent(grid)
+	filesWindow.Show()
+}
+
 func main() {
 	a := app.New()
 	w := a.NewWindow("Load balancer")
@@ -58,29 +66,26 @@ func main() {
 			clientNameLabel := widget.NewLabel("")
 			addFileBtn := widget.NewButton("Add New File", nil)
 			// filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
-			filesListContainer := container.NewStack()
+			// filesListContainer := container.NewStack()
+			filesList := widget.NewButton("Check Files", nil)
 			elapsedTimeLabel := widget.NewLabel("")
-			// return container.NewGridWithColumns(1,
-			// 	container.NewVBox(
-			// 		clientNameLabel,
-			// 		filesListContainer,
-			// 		elapsedTimeLabel,
-			// 	),
-			// 	addFileBtn,
-			// )
-			return container.NewGridWithColumns(4, clientNameLabel, filesListContainer, elapsedTimeLabel, addFileBtn)
+			return container.NewGridWithColumns(4, clientNameLabel, filesList, elapsedTimeLabel, addFileBtn)
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
 			c := (*clients)[lii]
 
 			objects := co.(*fyne.Container).Objects
 			label := objects[0]
-			filesList := objects[1].(*fyne.Container)
-			filesList.Objects = nil
+			showBtn := objects[1]
+			showBtn.(*widget.Button).OnTapped = func() {
+				showFiles(a, &c)
+			}
+			// filesList := objects[1].(*fyne.Container)
+			// filesList.Objects = nil
 			elapsedTimeLabel := objects[2].(*widget.Label)
 			fileBtn := objects[3]
-			files := createFilesListPerClient(&c)
-			filesList.Add(container.NewHBox(files))
+			// files := createFilesListPerClient(&c)
+			// filesList.Add(container.NewBorder(nil, nil, files, nil))
 			label.(*widget.Label).SetText(c.ClientName)
 
 			// for _, file := range *c.Files {
