@@ -52,10 +52,23 @@ func main() {
 			fileBtn := objects[3]
 
 			label.(*widget.Label).SetText(c.ClientName)
+			// list := widget.NewTable(
+			// 	func() (rows int, cols int) {
+			// 		return len(*c.Files), 1
+			// 	},
+			// 	func() fyne.CanvasObject {
+			// 		return widget.NewLabel("")
+			// 	},
+			// 	func(i widget.TableCellID, o fyne.CanvasObject) {
+			// 		o.(*widget.Label).SetText((*c.Files)[i].)
+			// 	},
+			// )
 			for _, file := range *c.Files {
-				fileSizeLabel := widget.NewLabel(fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
+				fileSizeLabel := widget.NewLabel(
+					fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
 				filesList.Add(fileSizeLabel)
 			}
+
 			elapsedTime := c.ElapsedTime()
 			elapsedTimeLabel.SetText(fmt.Sprintf("Elapsed Time: %.2f seconds", elapsedTime))
 			fileBtn.(*widget.Button).OnTapped = func() {
