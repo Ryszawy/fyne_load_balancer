@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -14,6 +15,10 @@ import (
 
 	"fyne.io/fyne/v2/widget"
 )
+
+func refreshTimer(table *widget.List) {
+	table.Refresh()
+}
 
 func main() {
 	a := app.New()
@@ -52,17 +57,7 @@ func main() {
 			fileBtn := objects[3]
 
 			label.(*widget.Label).SetText(c.ClientName)
-			// list := widget.NewTable(
-			// 	func() (rows int, cols int) {
-			// 		return len(*c.Files), 1
-			// 	},
-			// 	func() fyne.CanvasObject {
-			// 		return widget.NewLabel("")
-			// 	},
-			// 	func(i widget.TableCellID, o fyne.CanvasObject) {
-			// 		o.(*widget.Label).SetText((*c.Files)[i].)
-			// 	},
-			// )
+
 			for _, file := range *c.Files {
 				fileSizeLabel := widget.NewLabel(
 					fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
@@ -89,17 +84,28 @@ func main() {
 		table.Refresh()
 	})
 
-	menuLabel := widget.NewLabel("Create Client")
 	// fileSize := binding.NewFloat()
 	fileSizeEntry := widget.NewEntry()
 	fileSizeEntry.SetPlaceHolder("File Size")
-	filesGrid := container.NewGridWithColumns(2, fileSizeEntry)
-
-	menu := container.NewGridWithRows(4, menuLabel, filesGrid, bars, addClientBtn)
+	filesGrid := container.NewGridWithColumns(1, fileSizeEntry)
+	controlMenu := container.NewGridWithColumns(2, widget.NewButton("Start", nil), widget.NewButton("Stop", nil))
+	serverMenu := widget.NewButton("Create New Server", nil)
+	menu := container.NewGridWithRows(4, serverMenu, filesGrid, addClientBtn, controlMenu)
 
 	grid := container.NewGridWithColumns(2, bars, menu)
 	tableContainer := container.NewGridWithColumns(1, table)
 
+	go func() {
+		ticker := time.NewTicker(1 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				refreshTimer(table)
+			}
+		}
+	}()
 	w.SetContent(container.NewGridWithColumns(1, grid, tableContainer))
 	w.ShowAndRun()
 }
