@@ -20,6 +20,21 @@ func refreshTimer(table *widget.List) {
 	table.Refresh()
 }
 
+func createFilesListPerClient(c *client.Client) *widget.List {
+	return widget.NewList(
+		func() int {
+			return len(*c.Files)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("")
+		},
+		func(lii widget.ListItemID, co fyne.CanvasObject) {
+			cnt := fmt.Sprintf("File %d: %.2f MB", (*c.Files)[lii].FileID, (*c.Files)[lii].Size)
+			co.(*widget.Label).SetText(cnt)
+		},
+	)
+}
+
 func main() {
 	a := app.New()
 	w := a.NewWindow("Load balancer")
@@ -42,8 +57,17 @@ func main() {
 		func() fyne.CanvasObject {
 			clientNameLabel := widget.NewLabel("")
 			addFileBtn := widget.NewButton("Add New File", nil)
-			filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
+			// filesListContainer := container.NewHBox(widget.NewLabel("Empty"))
+			filesListContainer := container.NewStack()
 			elapsedTimeLabel := widget.NewLabel("")
+			// return container.NewGridWithColumns(1,
+			// 	container.NewVBox(
+			// 		clientNameLabel,
+			// 		filesListContainer,
+			// 		elapsedTimeLabel,
+			// 	),
+			// 	addFileBtn,
+			// )
 			return container.NewGridWithColumns(4, clientNameLabel, filesListContainer, elapsedTimeLabel, addFileBtn)
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
@@ -55,14 +79,15 @@ func main() {
 			filesList.Objects = nil
 			elapsedTimeLabel := objects[2].(*widget.Label)
 			fileBtn := objects[3]
-
+			files := createFilesListPerClient(&c)
+			filesList.Add(container.NewHBox(files))
 			label.(*widget.Label).SetText(c.ClientName)
 
-			for _, file := range *c.Files {
-				fileSizeLabel := widget.NewLabel(
-					fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
-				filesList.Add(fileSizeLabel)
-			}
+			// for _, file := range *c.Files {
+			// 	fileSizeLabel := widget.NewLabel(
+			// 		fmt.Sprintf("File %d: %.2f MB", file.FileID, file.Size))
+			// 	filesList.Add(fileSizeLabel)
+			// }
 
 			elapsedTime := c.ElapsedTime()
 			elapsedTimeLabel.SetText(fmt.Sprintf("Elapsed Time: %.2f seconds", elapsedTime))
@@ -87,7 +112,8 @@ func main() {
 	// fileSize := binding.NewFloat()
 	fileSizeEntry := widget.NewEntry()
 	fileSizeEntry.SetPlaceHolder("File Size")
-	filesGrid := container.NewGridWithColumns(1, fileSizeEntry)
+
+	filesGrid := container.NewGridWithColumns(2, fileSizeEntry)
 	controlMenu := container.NewGridWithColumns(2, widget.NewButton("Start", nil), widget.NewButton("Stop", nil))
 	serverMenu := widget.NewButton("Create New Server", nil)
 	menu := container.NewGridWithRows(4, serverMenu, filesGrid, addClientBtn, controlMenu)
